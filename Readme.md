@@ -1,7 +1,7 @@
 ASA Datathon
 =============
 
-This repository contains the code and data for the ASA 2014 Datathon entry for myself, Brian Hamlin and Sarah Quandri
+This repository contains the code and data (untar the data dir) for the ASA 2014 Datathon entry for myself, Brian Hamlin and Sarah Quandri
 
 Notes
 ======
