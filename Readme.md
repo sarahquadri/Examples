@@ -10,7 +10,7 @@ Notes
 
 - The statistical analysis is completed using run_script.R, which has a comment saying where I ran a little python script to generate information for our dependent variable in our regression.  Sorry its not very clean, we ran out of time
 
-- Network visualizations were completed using ORA[http://casos.cs.cmu.edu]
+- Network visualizations were completed using [ORA](http://casos.cs.cmu.edu)
 
 License
 =======
