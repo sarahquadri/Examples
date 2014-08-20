@@ -3,8 +3,12 @@ ASA Datathon
 
 This repository contains the code and data (untar the data dir) for the ASA 2014 Datathon entry for myself, Brian Hamlin and Sarah Quandri
 
+
+
 Notes
 ======
+
+- Unfortunately in my sleep-deprived state after the event when I was putting the code up, I somehow lost the last little bit of the analysis.  Basically, all I did was run an L1 regularized linear regression w/ glmnet, using all the census variables on the logged income disparity.  Lemme know if you want to replicate and can't and I'll piece it back together
 
 - All input data is in data/input/ - we used census data from the 2010 Census aggregated into neighborhoods and a network of adjacent neighborhoods. Information on how this was done is in database_notes_brian.txt, though for full details you many want to contact Brian himself
 
