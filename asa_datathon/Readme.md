@@ -1,7 +1,7 @@
 ASA Datathon
 =============
 
-This repository contains the code and data (untar the data dir) for the ASA 2014 Datathon entry for myself, [Brian Hamlin](http://ct.light42.com/) and [Sarah Quadri](https://github.com/sarahquadri)
+This repository contains the code and data (untar the data dir) for the ASA 2014 Datathon entry for myself, [Brian Hamlin](http://ct.light42.com/) and [Sarah Quadri](https://github.com/sarahquadri/Examples)
 
 
 
@@ -21,7 +21,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Kenneth Joseph, Brian Hamlin and Sarah Quandri
+Copyright (c) 2014 Kenneth Joseph, Brian Hamlin and Sarah Quadri
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
