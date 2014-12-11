@@ -1,0 +1,392 @@
+Get cgrid cells only entirely in a neighborhood
+--------------------------------------------------
+
+Starbucks import
+* open in Excel, Save as .csv
+* Use python csv to open, write again
+* import to postgres
+* convert to postgis
+
+##-
+import csv
+in_file.close()
+in_file = open('/var/www/html/www_shared/datathon_813/All_Starbucks_Locations_in_the_World.csv','r')
+csv_reader = csv.reader(in_file,dialect='excel')
+out_file = open('/var/www/html/www_shared/datathon_813/starbucks_clean.csv','w')
+csv_writer = csv.writer( out_file,
+                  delimiter='|',quotechar='"', quoting=csv.QUOTE_MINIMAL)
+for row in csv_reader:
+    csv_writer.writerow(row)
+out_file.close()
+#-
+Store ID,Name,Brand,Store Number,Phone Number,Ownership Type,Street Combined,Street 1,Street 2,Street 3,City,Country Subdivision,Country,Postal Code,Coordinates,Latitude,Longitude,Timezone,Current Timezone Offset,Olson Timezone,First Seen
+
+drop table if exists starbucks_all cascade;
+create table starbucks_all (
+store_id integer,
+store_name text,
+brand text,
+store_num text,
+phone_num text,
+ownership text,
+street_combined text,
+street1 text,
+street2 text,
+street3 text,
+city text,
+country_admin1 text,
+country text,
+postal_code text,
+coords text,
+lat float,
+lng float,
+timezone text,
+cur_tz_offset text,
+olson_tz text,
+first_seen text
+);
+
+copy starbucks_all from '/var/www/html/www_shared/datathon_813/starbucks_clean.csv' with CSV delimiter E'|';
+alter table starbucks_all add column geom geometry;
+update starbucks_all set geom = ST_geomfromEWKT( 'SRID=4326;POINT('||lng::text||' '||lat::text||')' );
+alter table starbucks_all add primary key (store_id);
+create index sba_geom_idx on starbucks_all using GIST(geom);
+analyze starbucks_all;
+
+copy (
+SELECT n.neighborho, count(*)
+FROM
+  nb_ask_final n, starbucks_all s
+WHERE st_intersects( n.the_geom, s.geom) AND
+  n.metro = 'San Francisco Bay Area' 
+GROUP BY n.neighborho 
+) to '/home/shared/starbucks_in_nghbrhds.csv'
+  with csv header delimiter E'|';
+
+
+##---- network inputs v2
+drop table out_work2 cascade;
+create table out_work2 as
+select 
+  n.neighborho,
+  id_grid, county, intersection_density_sqmi, intersection_density_sqkm, 
+       intersection_count_qtrmi, intersection_count_onekm,
+       gross_du_dens, gross_hh_dens, gross_pop_dens, gross_emp_dens, 
+       gross_tot_dens, net_du_dens, net_hh_dens, net_pop_dens, net_emp_dens, 
+       net_tot_dens, use_du_dens, use_hh_dens, use_pop_dens, use_emp_dens, 
+       du, du_detsf, du_detsf_sl, du_detsf_ll, du_attsf, du_mf2to4, 
+       du_mf5p, du_mf, du_occ_rate, hh, hh_avg_size, hh_avg_children, 
+       hh_own_occ, hh_rent_occ,
+       hh_avg_inc, hh_agg_inc, hh_veh0, hh_veh1, hh_veh2, 
+       hh_veh3p, hh_avg_veh, hh_agg_veh, hh1, hh2, hh3, hh4, hh5, pop, 
+       pop_female, pop_male, pop_female_pct, pop_male_pct, pop_white_not_hisp, 
+       pop_of_color, pop_white_not_hisp_pct, pop_of_color_pct, pop_children, 
+       pop_age0_4, pop_age5_9, pop_age10_14, pop_age15_17, pop_age18_19, 
+       pop_age20, pop_age21, pop_age22_24, pop_age25_29, pop_age30_39, 
+       pop_age40_49, pop_age50_64, pop_age65_up, pop_age16_up, pop_age25_up, 
+       pop_avg_age, pop_avg_age_of20_64, pop_avg_age_of25_64, pop_avg_age_of20_up, 
+       pop_avg_age_of25_up, pop_female_age20_64, pop_male_age20_64, 
+       pop_female_age25_64, pop_male_age25_64, pop_in_school, 	pop_in_college,pop_hs_not_comp, 
+       pop_hs_diploma, pop_assoc_some_coll, pop_coll_degree, pop_grad_degree, 
+       pop_hs_not_comp_pct, pop_hs_diploma_pct, pop_assoc_some_coll_pct, 
+       pop_coll_degree_pct, pop_grad_degree_pct, pop_employed, pop_employed_civ, 
+       pop_employed_af, pop_unemployed, pop_not_in_laborforce, pop_ind_retail, 
+       pop_ind_restaccom, pop_ind_entrec, pop_ind_office, pop_ind_educ, 
+       pop_ind_medss, pop_ind_public, pop_ind_manuf, pop_ind_transware, 
+       pop_ind_util, pop_ind_whole, pop_ind_constr, pop_ind_other, pop_ind_ag, 
+       pop_ind_extract, emp, emp_retail, emp_restaccom, emp_entrec, 
+       emp_office, emp_educ, emp_medss, emp_public, emp_af, emp_manuf, 
+       emp_transware, emp_util, emp_whole, emp_constr, emp_other, emp_ag, 
+       emp_extract, emp_vmt_office, emp_vmt_public, emp_industry, emp_industry_no_ag, 
+       emp_irrigated_sqft, res_irrigated_sqft, bldg_sqft_detsf, bldg_sqft_detsf_sl, 
+       bldg_sqft_detsf_ll, bldg_sqft_attsf, bldg_sqft_mf2to4, bldg_sqft_mf5p, 
+       bldg_sqft_retail, bldg_sqft_restaccom, bldg_sqft_entrec, bldg_sqft_office, 
+       bldg_sqft_educ, bldg_sqft_medss, bldg_sqft_public, bldg_sqft_af, 
+       bldg_sqft_manuf, bldg_sqft_transware, bldg_sqft_util, bldg_sqft_whole, 
+       bldg_sqft_constr, bldg_sqft_emp_other, placetype_id, urban_ldc, 
+       compact_ldc, standard_ldc
+FROM
+  uf_ba_grid_work_geom,
+  nb_ask_final n
+WHERE
+  st_intersects( n.the_geom, uf_ba_grid_work_geom.geom );
+
+COPY (select * from out_work2) to '/home/shared/out_work2.csv' with CSV header delimiter E'|';
+##-----
+
+##-- find the tracts that are split by Place
+##--  a) which ACS 5yr geoid's occur in Contra Costa
+SELECT 
+  g.geoid 
+  --a.*
+FROM 
+  public.acs20125_seq_metadata, 
+  public.acs20125_geo_defs_ca g, 
+  public.acs_mtable_2_raw_ca a
+WHERE 
+  g.logrecno = acs20125_seq_metadata.e_logrecno AND
+  a.seq_metadata_key = acs20125_seq_metadata.pkey  AND
+  g.geoid ~ '08000US06013'
+ORDER BY
+  g.geoid;
+  
+##-- where are split tracts?
+http://mcdc.missouri.edu/websas/geocorr12.html
+* select state California
+* select SOURCE 1 -> Census Tract
+* select SOURCE 2 -> Place
+* Geographic Filtering -> 06013
+Run Request
+Output Files -> Report Filtering
+
+  notice where a single tract is split by Place
+
+Tract 3010.00  Oakley
+  06210
+  53070
+  99999
+
+##--
+
+where is Oakley ?
+
+tl_2010_06_place10
+ ..
+ placefp10  | character varying(5)        | 
+ placens10  | character varying(8)        | 
+ geoid10    | character varying(7)        | 
+ name10     | character varying(100)      | 
+
+SELECT placefp10,placefp10,geoid10,name10
+FROM tl_2010_06_place10
+WHERE name10 ~ 'Oakley';
+
+ placefp10 | placefp10 | geoid10 | name10 
+-----------+-----------+---------+--------
+ 53070     | 53070     | 0653070 | Oakley
+
+census_20125_ca=# select st_astext( st_centroid( the_geom)) from tl_2010_06_place10
+census_20125_ca-# where name10 = 'Oakley';
+                 st_astext                 
+-------------------------------------------
+ POINT(-121.695084667756 37.9929724828907)
+(1 row)
+
+##-------------------------------------------------------------------------------
+##-- create the adjacency network file.. (imperfect)
+##--
+
+copy (
+select a.neighborho, b.neighborho
+         from nb_ask_final a LEFT JOIN nb_ask_final b
+           on ( a.the_geom && b.the_geom )
+WHERE a.metro = 'San Francisco Bay Area' and  b.metro = 'San Francisco Bay Area'    
+                  
+order by a.neighborho,  b.neighborho )
+to '/home/shared/nb_adj2.csv' with CSV header delimiter E'|';
+
+##-------------------------------------------------------------------------------
+##----
+inputs_outputs_bayarea   | grid150m_bayarea_loaded_census2010_placetyped
+
+dbname=dlab_aug14
+
+dbb@i7d:/home/shared/dlab_datathon14/data_src$ pg_dump jtt_test_i7d -t nb_ask_final | psql -q dlab_aug14
+
+
+##--
+tl_2010_06_tract10  countyfp10
+tl_2010_06_county10 name10 countyfp10
+
+001 075 097 095 041 081 085 013 
+##---
+ create table ba_tracts_2010 as
+ select * from tl_2010_06_tract10
+ where countyfp10 in ('001', '075', '097', '095', '041', '081', '085', '013');
+
+
+tl_2010_06_tract10
+...
+ statefp10  | character varying(2)        | 
+ countyfp10 | character varying(3)        | 
+ tractce10  | character varying(6)        | 
+ geoid10    | character varying(11)       | 
+
+
+select statefp10,countyfp10,tractce10,geoid10 from tl_2010_06_tract10
+  WHERE countyfp10 = '001';
+
+ statefp10 | countyfp10 | tractce10 |   geoid10 
+ 06        | 001        | 402800    | 06001402800
+##--
+
+OneWay_Min transportation
+
+COPY (
+SELECT transdist, neighborho, oneway_min
+FROM
+  sanfranciscocommutetime s, nb_ask_final n
+WHERE
+  st_intersects( st_PointOnSurface(n.the_geom), s.geom)  AND
+  n.metro = 'San Francisco Bay Area'
+) to '/home/shared/trans_nghb_dlab.csv'
+  WITH CSV Header delimiter E'|';
+
+
+##--
+
+select distinct(metro,state) from nb_ask_final where state = 'CA';
+("San Francisco Bay Area",CA)
+
+##--
+copy 
+(select a.neighborho, b.neighborho
+ from nb_ask_final a JOIN nb_ask_final b
+   on (st_touches( a.the_geom, b.the_geom ))
+WHERE
+  a.metro = 'San Francisco Bay Area' )
+
+to '/var/www/html/www_shared/datathon_813/nghbd_network.csv'
+with CSV header delimiter E'|';
+
+##--
+select a.neighborho, b.neighborho
+ from nb_ask_final a JOIN nb_ask_final b
+   on (st_touches( a.the_geom, b.the_geom ))
+WHERE
+  a.metro = 'San Francisco Bay Area';
+
+
+##--
+drop table out_work1 cascade;
+create table out_work1 as
+select 
+  n.neighborho,
+  id_grid, county, intersection_density_sqmi, intersection_density_sqkm, 
+       intersection_count_qtrmi, intersection_count_onekm, parcel_sqft, 
+       acres_grid, acres_grid_urban, acres_grid_gf, acres_grid_con, 
+       acres_parcel, acres_parcel_urban, acres_parcel_gf, acres_parcel_con, 
+       acres_parcel_res, acres_parcel_res_detsf, acres_parcel_res_detsf_sl, 
+       acres_parcel_res_detsf_ll, acres_parcel_res_mf, acres_parcel_emp, 
+       acres_parcel_emp_off, acres_parcel_emp_ret, acres_parcel_emp_ind, 
+       acres_parcel_emp_ag, acres_parcel_emp_mixed, acres_parcel_mixed, 
+       acres_parcel_mixed_w_off, acres_parcel_mixed_no_off, acres_parcel_no_use, 
+       acres_parcel_urban_res, acres_parcel_urban_emp, acres_parcel_urban_mixed, 
+       acres_parcel_urban_no_use, acres_parcel_gf_res, acres_parcel_gf_emp, 
+       acres_parcel_gf_mixed, acres_parcel_gf_no_use, acres_parcel_con_res, 
+       acres_parcel_con_emp, acres_parcel_con_mixed, acres_parcel_con_no_use, 
+       gross_du_dens, gross_hh_dens, gross_pop_dens, gross_emp_dens, 
+       gross_tot_dens, net_du_dens, net_hh_dens, net_pop_dens, net_emp_dens, 
+       net_tot_dens, use_du_dens, use_hh_dens, use_pop_dens, use_emp_dens, 
+       du, du_detsf, du_detsf_sl, du_detsf_ll, du_attsf, du_mf2to4, 
+       du_mf5p, du_mf, du_occ_rate, hh, hh_avg_size, hh_avg_children, 
+       hh_own_occ, hh_rent_occ, hh_own_occ_pct, hh_rent_occ_pct, hh_inc_00_10, 
+       hh_inc_10_20, hh_inc_20_30, hh_inc_30_40, hh_inc_40_50, hh_inc_00_50, 
+       hh_inc_50_60, hh_inc_60_75, hh_inc_50_75, hh_inc_75_100, hh_inc_100p, 
+       hh_inc_100_125, hh_inc_125_150, hh_inc_150_200, hh_inc_200p, 
+       hh_inc_00_10_pct, hh_inc_10_20_pct, hh_inc_20_30_pct, hh_inc_30_40_pct, 
+       hh_inc_40_50_pct, hh_inc_50_60_pct, hh_inc_60_75_pct, hh_inc_75_100_pct, 
+       hh_inc_100p_pct, hh_inc_100_125_pct, hh_inc_125_150_pct, hh_inc_150_200_pct, 
+       hh_inc_200p_pct, hh_avg_inc, hh_agg_inc, hh_veh0, hh_veh1, hh_veh2, 
+       hh_veh3p, hh_avg_veh, hh_agg_veh, hh1, hh2, hh3, hh4, hh5, pop, 
+       pop_female, pop_male, pop_female_pct, pop_male_pct, pop_white_not_hisp, 
+       pop_of_color, pop_white_not_hisp_pct, pop_of_color_pct, pop_children, 
+       pop_age0_4, pop_age5_9, pop_age10_14, pop_age15_17, pop_age18_19, 
+       pop_age20, pop_age21, pop_age22_24, pop_age25_29, pop_age30_39, 
+       pop_age40_49, pop_age50_64, pop_age65_up, pop_age16_up, pop_age25_up, 
+       pop_avg_age, pop_avg_age_of20_64, pop_avg_age_of25_64, pop_avg_age_of20_up, 
+       pop_avg_age_of25_up, pop_female_age20_64, pop_male_age20_64, 
+       pop_female_age25_64, pop_male_age25_64, pop_female_of_age20_64_pct, 
+       pop_male_of_age20_64_pct, pop_in_school, pop_in_college, pop_hs_not_comp, 
+       pop_hs_diploma, pop_assoc_some_coll, pop_coll_degree, pop_grad_degree, 
+       pop_hs_not_comp_pct, pop_hs_diploma_pct, pop_assoc_some_coll_pct, 
+       pop_coll_degree_pct, pop_grad_degree_pct, pop_employed, pop_employed_civ, 
+       pop_employed_af, pop_unemployed, pop_not_in_laborforce, pop_ind_retail, 
+       pop_ind_restaccom, pop_ind_entrec, pop_ind_office, pop_ind_educ, 
+       pop_ind_medss, pop_ind_public, pop_ind_manuf, pop_ind_transware, 
+       pop_ind_util, pop_ind_whole, pop_ind_constr, pop_ind_other, pop_ind_ag, 
+       pop_ind_extract, emp, emp_retail, emp_restaccom, emp_entrec, 
+       emp_office, emp_educ, emp_medss, emp_public, emp_af, emp_manuf, 
+       emp_transware, emp_util, emp_whole, emp_constr, emp_other, emp_ag, 
+       emp_extract, emp_vmt_office, emp_vmt_public, emp_industry, emp_industry_no_ag, 
+       emp_irrigated_sqft, res_irrigated_sqft, bldg_sqft_detsf, bldg_sqft_detsf_sl, 
+       bldg_sqft_detsf_ll, bldg_sqft_attsf, bldg_sqft_mf2to4, bldg_sqft_mf5p, 
+       bldg_sqft_retail, bldg_sqft_restaccom, bldg_sqft_entrec, bldg_sqft_office, 
+       bldg_sqft_educ, bldg_sqft_medss, bldg_sqft_public, bldg_sqft_af, 
+       bldg_sqft_manuf, bldg_sqft_transware, bldg_sqft_util, bldg_sqft_whole, 
+       bldg_sqft_constr, bldg_sqft_emp_other, placetype_id, urban_ldc, 
+       compact_ldc, standard_ldc
+FROM
+  uf_ba_grid_work_geom,
+  nb_ask_final n
+WHERE
+  st_intersects( n.the_geom, uf_ba_grid_work_geom.geom );
+
+
+
+##---
+drop table if exists uf_ba_grid_work_geom cascade;
+CREATE TABLE uf_ba_grid_work_geom as
+SELECT st_transform( ST_Centroid(wkb_geometry), 4326) as geom,
+       id_grid, county, intersection_density_sqmi, intersection_density_sqkm, 
+       intersection_count_qtrmi, intersection_count_onekm, parcel_sqft, 
+       acres_grid, acres_grid_urban, acres_grid_gf, acres_grid_con, 
+       acres_parcel, acres_parcel_urban, acres_parcel_gf, acres_parcel_con, 
+       acres_parcel_res, acres_parcel_res_detsf, acres_parcel_res_detsf_sl, 
+       acres_parcel_res_detsf_ll, acres_parcel_res_mf, acres_parcel_emp, 
+       acres_parcel_emp_off, acres_parcel_emp_ret, acres_parcel_emp_ind, 
+       acres_parcel_emp_ag, acres_parcel_emp_mixed, acres_parcel_mixed, 
+       acres_parcel_mixed_w_off, acres_parcel_mixed_no_off, acres_parcel_no_use, 
+       acres_parcel_urban_res, acres_parcel_urban_emp, acres_parcel_urban_mixed, 
+       acres_parcel_urban_no_use, acres_parcel_gf_res, acres_parcel_gf_emp, 
+       acres_parcel_gf_mixed, acres_parcel_gf_no_use, acres_parcel_con_res, 
+       acres_parcel_con_emp, acres_parcel_con_mixed, acres_parcel_con_no_use, 
+       gross_du_dens, gross_hh_dens, gross_pop_dens, gross_emp_dens, 
+       gross_tot_dens, net_du_dens, net_hh_dens, net_pop_dens, net_emp_dens, 
+       net_tot_dens, use_du_dens, use_hh_dens, use_pop_dens, use_emp_dens, 
+       du, du_detsf, du_detsf_sl, du_detsf_ll, du_attsf, du_mf2to4, 
+       du_mf5p, du_mf, du_occ_rate, hh, hh_avg_size, hh_avg_children, 
+       hh_own_occ, hh_rent_occ, hh_own_occ_pct, hh_rent_occ_pct, hh_inc_00_10, 
+       hh_inc_10_20, hh_inc_20_30, hh_inc_30_40, hh_inc_40_50, hh_inc_00_50, 
+       hh_inc_50_60, hh_inc_60_75, hh_inc_50_75, hh_inc_75_100, hh_inc_100p, 
+       hh_inc_100_125, hh_inc_125_150, hh_inc_150_200, hh_inc_200p, 
+       hh_inc_00_10_pct, hh_inc_10_20_pct, hh_inc_20_30_pct, hh_inc_30_40_pct, 
+       hh_inc_40_50_pct, hh_inc_50_60_pct, hh_inc_60_75_pct, hh_inc_75_100_pct, 
+       hh_inc_100p_pct, hh_inc_100_125_pct, hh_inc_125_150_pct, hh_inc_150_200_pct, 
+       hh_inc_200p_pct, hh_avg_inc, hh_agg_inc, hh_veh0, hh_veh1, hh_veh2, 
+       hh_veh3p, hh_avg_veh, hh_agg_veh, hh1, hh2, hh3, hh4, hh5, pop, 
+       pop_female, pop_male, pop_female_pct, pop_male_pct, pop_white_not_hisp, 
+       pop_of_color, pop_white_not_hisp_pct, pop_of_color_pct, pop_children, 
+       pop_age0_4, pop_age5_9, pop_age10_14, pop_age15_17, pop_age18_19, 
+       pop_age20, pop_age21, pop_age22_24, pop_age25_29, pop_age30_39, 
+       pop_age40_49, pop_age50_64, pop_age65_up, pop_age16_up, pop_age25_up, 
+       pop_avg_age, pop_avg_age_of20_64, pop_avg_age_of25_64, pop_avg_age_of20_up, 
+       pop_avg_age_of25_up, pop_female_age20_64, pop_male_age20_64, 
+       pop_female_age25_64, pop_male_age25_64, pop_female_of_age20_64_pct, 
+       pop_male_of_age20_64_pct, pop_in_school, pop_in_college, pop_hs_not_comp, 
+       pop_hs_diploma, pop_assoc_some_coll, pop_coll_degree, pop_grad_degree, 
+       pop_hs_not_comp_pct, pop_hs_diploma_pct, pop_assoc_some_coll_pct, 
+       pop_coll_degree_pct, pop_grad_degree_pct, pop_employed, pop_employed_civ, 
+       pop_employed_af, pop_unemployed, pop_not_in_laborforce, pop_ind_retail, 
+       pop_ind_restaccom, pop_ind_entrec, pop_ind_office, pop_ind_educ, 
+       pop_ind_medss, pop_ind_public, pop_ind_manuf, pop_ind_transware, 
+       pop_ind_util, pop_ind_whole, pop_ind_constr, pop_ind_other, pop_ind_ag, 
+       pop_ind_extract, emp, emp_retail, emp_restaccom, emp_entrec, 
+       emp_office, emp_educ, emp_medss, emp_public, emp_af, emp_manuf, 
+       emp_transware, emp_util, emp_whole, emp_constr, emp_other, emp_ag, 
+       emp_extract, emp_vmt_office, emp_vmt_public, emp_industry, emp_industry_no_ag, 
+       emp_irrigated_sqft, res_irrigated_sqft, bldg_sqft_detsf, bldg_sqft_detsf_sl, 
+       bldg_sqft_detsf_ll, bldg_sqft_attsf, bldg_sqft_mf2to4, bldg_sqft_mf5p, 
+       bldg_sqft_retail, bldg_sqft_restaccom, bldg_sqft_entrec, bldg_sqft_office, 
+       bldg_sqft_educ, bldg_sqft_medss, bldg_sqft_public, bldg_sqft_af, 
+       bldg_sqft_manuf, bldg_sqft_transware, bldg_sqft_util, bldg_sqft_whole, 
+       bldg_sqft_constr, bldg_sqft_emp_other, placetype_id, urban_ldc, 
+       compact_ldc, standard_ldc
+  FROM inputs_outputs_bayarea.grid150m_bayarea_loaded_census2010_placetyped;
+
+ALTER TABLE uf_ba_grid_work_geom add PRIMARY KEY (id_grid);
+create index ufbag_geom_idx on uf_ba_grid_work_geom using GIST (geom);
+
+
+
+
