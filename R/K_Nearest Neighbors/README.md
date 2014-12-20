@@ -1,4 +1,6 @@
-"KNN.R" determines if the classification of a point is correct by using K Nearest Neighbors (KNN):
+"KNN.R" determines if the classification of a point is correct by using K Nearest Neighbors (KNN): 
+Our prof wanted us to get a "taste" of Machine Learning.  
+I found the book "Machine Learning with R" by Brett Lantz to be very helpful.
 
 In a nutshell, KNN is a basic machine learning technique that determines the classification of an "object" based on
 the objects (neighbors) surrounding it.  Think about high school, your "classification" was based on the people that you hung 
