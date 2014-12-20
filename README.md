@@ -15,7 +15,7 @@ List of Work Examples:
    
 2. R Coding Examples:
    Just a few, will keep on adding; basically from an R course taught by Dr. John Angell of CSU East Bay who wanted us to get
-   a "taste" of MAchine Learning,  I'll be adding one from a Coursera course I took that analyzed sensor data.
+   a "taste" of Machine Learning,  I'll be adding one from a Coursera course I took that analyzed sensor data.
 
 3.	Group Project Checklist: 
 Project Management Guide to facilitate time management and the successful completion of group project milestones 
