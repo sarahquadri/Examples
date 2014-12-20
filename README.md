@@ -2,7 +2,7 @@ Examples of Sarah Quadri's Work:
 
 Please Note: 
 
-I am currently re-vamping my SAS analysis of CEO Compensation from Fortune 500 companies, but the final group report is available for review.  I'll also add some Excel Pivot Tables soon.
+I'm re-vamping my SAS analysis of CEO Compensation from Fortune 500 companies, but the final group report is available for review.  I'll also add some Excel Pivot Tables soon.
 
 List of Work Examples:
 
@@ -15,7 +15,7 @@ List of Work Examples:
    
 2. R Coding Examples:
    Just a few, will keep on adding; basically from an R course taught by Dr. John Angell of CSU East Bay who wanted us to get
-   a "taste" of Machine Learning,  I'll be adding one from a Coursera course I took that analyzed sensor data.
+   a "taste" of Machine Learning,  I'll be adding a program that takes CSV files from individual sensors and combines data.
 
 3.	Group Project Checklist: 
 Project Management Guide to facilitate time management and the successful completion of group project milestones 
