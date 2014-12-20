@@ -8,7 +8,7 @@ List of Work Examples:
 
 1. American Sociological Association's Datathon 2014:
    This was my first datathon: we had to come up with a problem, collect and analyze data, and create a presentation in
-   24 hours, focusing on urban data.  We decided to look at data from San Francisco and try to determine what factors
+   24 hours, focusing on an urban issue.  We decided to look at data from San Francisco and try to determine what factors
    cause "disparity" between neighborhoods. (Basically, why is the Castro more affulent than the Mission, etc). 
    Kenny then threw all of Brian's US Census Data into a Python program that tried to cluster attributes such as car ownership,
    median age, employment, etc to come up with a model to determne what makes a neighborhood more "affluent" than another.
