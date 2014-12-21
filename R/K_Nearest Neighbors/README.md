@@ -2,8 +2,7 @@
 Our prof wanted us to get a "taste" of Machine Learning.  I found the book "Machine Learning with R" by Brett Lantz to be very helpful.
 
 In a nutshell, KNN is a basic machine learning technique that determines the classification of an "object" based on
-the objects (neighbors) surrounding it.  Think about high school, your "classification" was based on the people that you hung 
-around (you were popular if you ate at the popular kids table, etc.). 
+the objects (neighbors) surrounding it.  Remember the adage "...birds of a feather flock together" or how in high school, similar people hung out together in cliques, KNN works on the same principle!
 
 There are many ways to determine the optimal number of neighbors that weigh in on the classification (K), 
 but I decided to use the square root of the total number of total points that are being evaluated, rounded up to the 
