@@ -2,7 +2,7 @@ Examples of Sarah Quadri's Work:
 
 Please Note: 
 
-I'm re-vamping my SAS analysis of CEO Compensation from Fortune 500 companies, but the final group report is available for review.  I'll also add some Excel Pivot Tables soon.
+I'm re-vamping my SAS analysis of CEO Compensation from Fortune 500 companies, but the final group report is available for review.  I'll also add some Excel examples (Pivot Tables, V-Lookups, etc) and Python code (I'm learning on my own right now and will be taking a Data Mining course through Coursera in February 2015).
 
 List of Work Examples:
 
