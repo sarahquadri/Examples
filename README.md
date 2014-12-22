@@ -2,16 +2,15 @@ Examples of Sarah Quadri's Work:
 
 Please Note: 
 
-I'm porting my SAS analysis of CEO Compensation from Fortune 500 companies to be compatible with "SAS Studio", free a web-based version of SAS that can be run on multiple platforms.  In the meantime, I've made the final group paper available for review under "/SAS/CEO Compensation".  I'll also add some Excel examples (Pivot Tables, V-Lookups, etc) and Python code (I'm learning on my own right now and will be taking a Data Mining course through Coursera in February 2015).
+I'm porting my SAS analysis of CEO Compensation from Fortune 500 companies to be compatible with "SAS Studio", free a web-based version of SAS that can be run on multiple platforms.  In the meantime, I've made the final group paper available for review under "/SAS/CEO Compensation".  I'll also add some Excel examples (Pivot Tables, V-Lookups, etc) and Python code (I'm learning on my own right now and will be taking a Data Mining course through Coursera that requires coding in Python).
 
 List of Work Examples:
 
 1. American Sociological Association's Datathon 2014:
-   This was my first datathon: we had to come up with a problem, collect and analyze data, and create a presentation in
-   24 hours, focusing on an urban issue.  We decided to look at data from San Francisco and try to determine what factors
-   cause "disparity" between neighborhoods. (Basically, why is the Castro more affulent than the Mission, etc). 
+   This was my first datathon: we had to collect and analyze data, and create a presentation in 24 hours, which focused on a       current urban issue.  We decided to look at data from San Francisco and try to determine what factors
+   cause economic "disparity" between neighborhoods. 
    Kenny then threw all of Brian's US Census Data into a Python program that tried to cluster attributes such as car ownership,
-   median age, employment, etc to come up with a model to determne what makes a neighborhood more "affluent" than another.
+   median age, employment, etc to come up with a model to determne what makes a neighborhood more or less ecomomically affluent    than another.
    
 2. R Coding Examples:
    Just a few, will keep on adding; basically from an R course taught by Dr. John Angell of CSU East Bay who wanted us to get
