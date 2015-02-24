@@ -2,7 +2,7 @@ Examples of Sarah Quadri's Work:
 
 Please Note: 
 
-I'm porting my SAS analysis of CEO Compensation from Fortune 500 companies to be compatible with "SAS Studio", free a web-based version of SAS that can be run on multiple platforms.  In the meantime, I've made the final group paper available for review under "/SAS/CEO Compensation".  I'll also add some Excel examples (Pivot Tables, V-Lookups, etc) and Python code (I'm learning on my own right now and will be taking a Data Mining course through Coursera that requires coding in Python).
+I'm porting my SAS analysis of CEO Compensation from Fortune 500 companies to be compatible with "SAS Studio", free a web-based version of SAS that can be run on multiple platforms.  In the meantime, I've made the final group paper available for review under "/SAS/CEO Compensation". 
 
 List of Work Examples:
 
