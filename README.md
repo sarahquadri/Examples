@@ -18,5 +18,8 @@ List of Work Examples:
    a "taste" of Machine Learning,  I'll be adding a program that takes CSV files from individual sensors and combines data.
 
 3.	Group Project Checklist: 
-Project Management Guide to facilitate time management and the successful completion of group project milestones 
-in the CSU East Bay Statistics Department.
+   Project Management Guide to facilitate time management and the successful completion of group project milestones 
+   in the CSU East Bay Statistics Department.
+
+4. Excel: 
+   Pivot Table: Titanic Data  I created som pivot tables to get some insight on survivors of the Titanic; the data is the          training set data that the Kaggle provided for teh Titanic competition.
