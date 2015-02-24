@@ -22,4 +22,4 @@ List of Work Examples:
    in the CSU East Bay Statistics Department.
 
 4. Excel: 
-   Pivot Table: Titanic Data  I created som pivot tables to get some insight on survivors of the Titanic; the data is the          training set data that the Kaggle provided for teh Titanic competition.
+   Pivot Table: Titanic Data  I created som pivot tables to get some insight on survivors of the Titanic; the data is the          training set data that Kaggle provided for the Titanic competition.
